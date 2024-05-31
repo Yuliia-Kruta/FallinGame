@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
- * GUI for the Maze Runner Game.
+ * GUI for the Fallin Game.
  *
  * NOTE: Do NOT run this class directly in IntelliJ - run 'RunGame' instead.
  */
@@ -20,7 +20,7 @@ public class GameGUI extends Application {
         BorderPane root = FXMLLoader.load(getClass().getResource("game_gui.fxml"));
 
         primaryStage.setScene(new Scene(root, 800, 800));
-        primaryStage.setTitle("Fallin Game");
+        primaryStage.setTitle("Yuliia Kruta - Fallin Game");
         primaryStage.show();
     }
 

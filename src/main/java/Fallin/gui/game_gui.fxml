@@ -1,18 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Fallin.gui.Controller">
-    <padding>
-        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-    </padding>
-
+<BorderPane prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Fallin.gui.Controller">
     <center>
-        <GridPane fx:id="gridPane" prefHeight="400.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+        <GridPane fx:id="gameMap" gridLinesVisible="true" maxHeight="500" maxWidth="500" style="-fx-border-color: black; -fx-border-width: 2;">
 
         </GridPane>
     </center>
-
-
+    <right>
+        <VBox prefHeight="512.0" prefWidth="240.0" spacing="15.0" BorderPane.alignment="CENTER">
+            <TextField fx:id="difficultyInput" promptText="Please enter difficulty (0-10)" />
+            <Button onAction="#handleRun" prefHeight="26.0" prefWidth="50.0" text="Run" textAlignment="CENTER" />
+            <Label fx:id="stepsLimit" text="Steps left: " wrapText="true" />
+            <Label fx:id="stepsCounter" text="Steps counter: " />
+            <Label fx:id="life" text="Life: " />
+            <Label fx:id="treasures" alignment="CENTER" text="Treasures collected: " />
+            <GridPane alignment="CENTER" hgap="10" vgap="10">
+                <Button onAction="#handleMoveUp" prefHeight="25.0" prefWidth="55.0" text="UP" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                <Button onAction="#handleMoveLeft" prefHeight="25.0" prefWidth="55.0" text="LEFT" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Button onAction="#handleMoveRight" prefHeight="25.0" prefWidth="55.0" text="RIGHT" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <Button onAction="#handleMoveDown" prefHeight="25.0" prefWidth="55.0" text="DOWN" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <VBox.margin>
+               <Insets top="20.0" />
+            </VBox.margin>
+            </GridPane>
+            <GridPane alignment="CENTER" hgap="10.0" prefHeight="26.0" prefWidth="127.0">
+                <Button onAction="#handleSave" prefWidth="60.0" text="SAVE" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Button onAction="#handleLoad" prefWidth="60.0" text="LOAD" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Button onAction="#handleHelp" prefWidth="60.0" text="HELP" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <VBox.margin>
+               <Insets top="50.0" />
+            </VBox.margin>
+            </GridPane>
+         <BorderPane.margin>
+            <Insets bottom="30.0" top="30.0" />
+         </BorderPane.margin>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+        </VBox>
+    </right>
 </BorderPane>
