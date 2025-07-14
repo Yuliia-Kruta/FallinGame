@@ -1,8 +1,11 @@
 package Fallin.engine;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Mutant extends Cell{
+public class Mutant extends Cell implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public Mutant(int x, int y) {
         super(x, y);
@@ -12,9 +15,9 @@ public class Mutant extends Cell{
     @Override
     public void handleInteraction(Player player, List<Mutant> mutants, Cell[][] map, int x, int y) {
         player.setLife(player.getLife() - 4);
-        mutants.remove(this);
         super.handleInteraction(player, mutants, map, x, y);
     }
+
     @Override
     public String getSymbol() {
         return "X";

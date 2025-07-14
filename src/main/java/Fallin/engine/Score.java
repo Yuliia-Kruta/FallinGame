@@ -1,8 +1,11 @@
 package Fallin.engine;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Score implements Comparable<Score> {
+public class Score implements Comparable<Score>, Serializable {
+
+    private static final long serialVersionUID = 1L;
     private int score;
     private LocalDate date;
 

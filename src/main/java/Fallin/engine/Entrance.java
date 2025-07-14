@@ -1,8 +1,11 @@
 package Fallin.engine;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Entrance extends Cell{
+public class Entrance extends Cell implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
 
     public Entrance(int x, int y) {

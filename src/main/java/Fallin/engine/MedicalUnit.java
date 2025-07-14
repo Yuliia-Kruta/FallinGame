@@ -1,8 +1,11 @@
 package Fallin.engine;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class MedicalUnit extends Cell{
+public class MedicalUnit extends Cell implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public MedicalUnit(int x, int y) {
         super(x, y);

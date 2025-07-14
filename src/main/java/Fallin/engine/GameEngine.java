@@ -9,7 +9,7 @@ public class GameEngine {
 
     private Cell[][] map;
     private Player player;
-    private List<Mutant> mutants;
+    private List<MutantData> mutantDataList;
     private int timeLimit = 100;
     private static final String TOP_SCORES_FILE = "top_scores.txt";
     private static List<Score> topScores = new ArrayList<>();
@@ -24,7 +24,7 @@ public class GameEngine {
     public GameEngine(int size, int difficulty) {
         map = new Cell[size][size];
         player = new Player(size-1, 0); //Placing player on the bottom left cell (the entrance)
-        mutants = new ArrayList<>();
+        mutantDataList = new ArrayList<>();
         generateMap(size, difficulty);
     }
 
@@ -42,8 +42,8 @@ public class GameEngine {
         return timeLimit;
     }
 
-    public List<Mutant> getMutants() {
-        return mutants;
+    public List<MutantData> getMutants() {
+        return mutantDataList;
     }
 
     public static List<Score> getTopScores() {
@@ -83,7 +83,7 @@ public class GameEngine {
                 try{
                     /* Gets constructor of the item's class and creates an object of that class passing x and y coordinates as parameters */
                     map[x][y] = CellClass.getConstructor(int.class, int.class).newInstance(x, y);
-                    if (map[x][y] instanceof Mutant) mutants.add(new Mutant(x, y));
+                    if (map[x][y] instanceof Mutant) mutantDataList.add(new MutantData(x, y));
                     placed++;
                 } catch (Exception e){
                     e.printStackTrace();
@@ -148,37 +148,35 @@ public class GameEngine {
     /**
      * Randomly moves mutants on the map.
      */
-    public void moveMutants(){
+    public void moveMutants() {
         Random random = new Random();
-        for(Mutant mutant : mutants){
-            int x = mutant.getX();
-            int y = mutant.getY();
+        List<MutantData> updatedMutants = new ArrayList<>();
+
+        for (MutantData mutant : mutantDataList) {
+            int x = mutant.x;
+            int y = mutant.y;
             int newX = x;
             int newY = y;
 
-            switch (random.nextInt(4)){
-                case 0:
-                    newX--;
-                    break;
-                case 1:
-                    newX++;
-                    break;
-                case 2:
-                    newY--;
-                    break;
-                case 3:
-                    newY++;
-                    break;
+            switch (random.nextInt(4)) {
+                case 0: newX--; break;
+                case 1: newX++; break;
+                case 2: newY--; break;
+                case 3: newY++; break;
             }
 
-            if(isValidMove(newX, newY) && map[newX][newY]==null){
+            if (isValidMove(newX, newY) && map[newX][newY] == null) {
                 map[x][y] = null;
-                mutant.setX(newX);
-                mutant.setY(newY);
-                map[newX][newY] = mutant;
+                map[newX][newY] = new Mutant(newX, newY);
+                updatedMutants.add(new MutantData(newX, newY));
+            } else {
+                updatedMutants.add(new MutantData(x, y)); // keep original position
             }
         }
+
+        mutantDataList = updatedMutants;
     }
+
 
     /**
      * Handles interaction with the cell.
@@ -189,9 +187,17 @@ public class GameEngine {
     public void handleCell(int x, int y){
         Cell cell = map[x][y];
         if (cell != null) {
-            cell.handleInteraction(player, mutants, map, x, y);
+            if (cell instanceof Mutant) {
+                removeMutantAt(x, y);
+            }
+            cell.handleInteraction(player, null, map, x, y);
+
         }
     }
+    private void removeMutantAt(int x, int y) {
+        mutantDataList.removeIf(m -> m.x == x && m.y == y);
+    }
+
 
 
     /**
@@ -262,6 +268,7 @@ public class GameEngine {
             System.out.println("#" + (i + 1) + " " + s.getScore() + " " + s.getDate());
         }
     }
+
 
     /**
      * Plays a text-based game
@@ -342,6 +349,21 @@ public class GameEngine {
         }
     }
 
+    private static SerializableCell[][] convertMapToSerializable(Cell[][] map) {
+        int size = map.length;
+        SerializableCell[][] serializableMap = new SerializableCell[size][size];
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (map[i][j] != null) {
+                    serializableMap[i][j] = new SerializableCell(i, j, map[i][j].getClass().getSimpleName());
+                }
+            }
+        }
+
+        return serializableMap;
+    }
+
     /**
      * Saves the current game state to a file.
      *
@@ -350,13 +372,54 @@ public class GameEngine {
      */
     public static void saveGame(String fileName, GameEngine engine) throws IOException {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            outputStream.writeObject(engine.map);
+            outputStream.writeObject(convertMapToSerializable(engine.map));
             outputStream.writeObject(engine.player);
-            outputStream.writeObject(engine.mutants);
+            outputStream.writeObject(engine.mutantDataList);
             outputStream.writeInt(engine.timeLimit);
             outputStream.writeObject(topScores);
         }
     }
+
+    private Cell[][] convertToCellMap(SerializableCell[][] sMap) {
+        int size = sMap.length;
+        Cell[][] map = new Cell[size][size];
+        mutantDataList = new ArrayList<>(); // reset or reinitialize it
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                SerializableCell sc = sMap[i][j];
+                if (sc != null) {
+                    String type = sc.getType();
+                    switch (type) {
+                        case "Treasure":
+                            map[i][j] = new Treasure(i, j);
+                            break;
+                        case "Trap":
+                            map[i][j] = new Trap(i, j);
+                            break;
+                        case "MedicalUnit":
+                            map[i][j] = new MedicalUnit(i, j);
+                            break;
+                        case "Mutant":
+                            map[i][j] = new Mutant(i, j);
+                            mutantDataList.add(new MutantData(i, j));
+                            break;
+                        case "Entrance":
+                            map[i][j] = new Entrance(i, j);
+                            break;
+                        case "Exit":
+                            map[i][j] = new Exit(i, j);
+                            break;
+                    }
+                }
+            }
+        }
+
+        return map;
+    }
+
+
+
 
     /**
      * Loads a saved game state from a file.
@@ -367,13 +430,15 @@ public class GameEngine {
      */
     public static void loadGame(String fileName, GameEngine engine) throws IOException, ClassNotFoundException {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
-            engine.map = (Cell[][]) inputStream.readObject();
+            SerializableCell[][] sMap = (SerializableCell[][]) inputStream.readObject();
+            engine.map = engine.convertToCellMap(sMap);
             engine.player = (Player) inputStream.readObject();
-            engine.mutants = (List<Mutant>) inputStream.readObject();
+            engine.mutantDataList = (List<MutantData>) inputStream.readObject();
             engine.timeLimit = inputStream.readInt();
             topScores = (List<Score>) inputStream.readObject();
         }
     }
+
 
 
 

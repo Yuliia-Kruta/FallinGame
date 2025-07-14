@@ -1,8 +1,11 @@
 package Fallin.engine;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Exit extends Cell{
+public class Exit extends Cell implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public Exit(int x, int y) {
         super(x, y);
