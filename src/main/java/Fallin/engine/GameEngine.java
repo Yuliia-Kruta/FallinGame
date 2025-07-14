@@ -213,7 +213,8 @@ public class GameEngine {
     /**
      * Loads top scores from the file.
      */
-    private static void loadTopScores() {
+    public static void loadTopScores() {
+        topScores.clear(); // Clear before loading to prevent duplicates
         try (Scanner scanner = new Scanner(new File(TOP_SCORES_FILE))) {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
@@ -226,6 +227,8 @@ public class GameEngine {
             System.err.println("Top scores file not found. Creating a new one.");
         }
     }
+
+
 
     /**
      * Saves top scores records to the file.
@@ -245,7 +248,7 @@ public class GameEngine {
      *
      * @param score the score.
      */
-    private static void handleTopScores(int score) {
+    public static void handleTopScores(int score) {
         loadTopScores();
         LocalDate today = LocalDate.now();
         topScores.add(new Score(score, today));

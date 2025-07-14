@@ -156,7 +156,17 @@ public class Controller {
             if (player.getX() == 0 && player.getY() == 9) {
                 gameEnded = true;
                 int score = 20 * player.getTreasures() + (gameEngine.getTimeLimit() - player.getSteps());
-                showAlert("Congratulations!", "You won! Your score is " + score);
+                GameEngine.handleTopScores(score); // Save score
+                StringBuilder sb = new StringBuilder("You won! Your score is " + score + "\n\nTop Scores:\n");
+
+                int rank = 1;
+                for (Score s : GameEngine.getTopScores()) {
+                    sb.append("#").append(rank++).append(" - ").append(s.getScore())
+                            .append(" (").append(s.getDate()).append(")\n");
+                }
+
+                showAlert("Congratulations!", sb.toString());
+
             } else if (player.getLife() <= 0) {
                 gameEnded = true;
                 showAlert("Game Over", "You ran out of life. Game Over!");
