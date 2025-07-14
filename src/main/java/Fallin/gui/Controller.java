@@ -33,6 +33,8 @@ public class Controller {
 
     private GameEngine gameEngine;
     private static final int MAP_SIZE = 10;
+    private boolean gameEnded = false;
+
 
     @FXML
     public void initialize() {
@@ -48,42 +50,29 @@ public class Controller {
         } else {
             int difficulty = Integer.parseInt(input);
             gameEngine = new GameEngine(MAP_SIZE, difficulty);
+            gameEnded = false; // RESET HERE
             setupGameMap();
             updateGameMap();
         }
     }
 
-    @FXML
-    private void handleMoveUp() {
-        gameEngine.movePlayer(2);
+
+    private void moveAndUpdate(int direction) {
+        if (gameEnded) return;
+        gameEngine.movePlayer(direction);
         updateGameMap();
-        gameEngine.moveMutants();
-        updateGameMap();
+        if (!gameEnded) {  // Only move mutants if game is still running
+            gameEngine.moveMutants();
+            updateGameMap();
+        }
     }
 
-    @FXML
-    private void handleMoveDown() {
-        gameEngine.movePlayer(4);
-        updateGameMap();
-        gameEngine.moveMutants();
-        updateGameMap();
-    }
 
-    @FXML
-    private void handleMoveLeft() {
-        gameEngine.movePlayer(1);
-        updateGameMap();
-        gameEngine.moveMutants();
-        updateGameMap();
-    }
+    @FXML private void handleMoveUp()    { moveAndUpdate(2); }
+    @FXML private void handleMoveDown()  { moveAndUpdate(4); }
+    @FXML private void handleMoveLeft()  { moveAndUpdate(1); }
+    @FXML private void handleMoveRight() { moveAndUpdate(3); }
 
-    @FXML
-    private void handleMoveRight() {
-        gameEngine.movePlayer(3);
-        updateGameMap();
-        gameEngine.moveMutants();
-        updateGameMap();
-    }
 
     @FXML
     private void handleSave() {
@@ -102,6 +91,7 @@ public class Controller {
         String fileName = "saved_game.txt";
         try {
             GameEngine.loadGame(fileName, gameEngine);
+            gameEnded = false; // RESET HERE TOO
             updateGameMap();
             showAlert("Game Loaded", "The game has been loaded successfully.");
         } catch (IOException | ClassNotFoundException e) {
@@ -109,6 +99,7 @@ public class Controller {
             e.printStackTrace();
         }
     }
+
 
     @FXML
     private void handleHelp() {
@@ -161,14 +152,20 @@ public class Controller {
         life.setText("Life: " + player.getLife());
         treasures.setText("Treasures collected: " + player.getTreasures());
 
-        if (player.getX() == 0 && player.getY() == 9) {
-            int score = 20 * gameEngine.getPlayer().getTreasures() + (gameEngine.getTimeLimit() - gameEngine.getPlayer().getSteps());
-            showAlert("Congratulations!", "Congratulations, you won! Your score is " + score);
-        } else if (player.getLife() <= 0) {
-            showAlert("Game Over", "You ran out of life. Game Over!");
-        } else if (player.getSteps() >= gameEngine.getTimeLimit()) {
-            showAlert("Game Over", "You went above the steps limit! Game Over!");
+        if (!gameEnded) {
+            if (player.getX() == 0 && player.getY() == 9) {
+                gameEnded = true;
+                int score = 20 * player.getTreasures() + (gameEngine.getTimeLimit() - player.getSteps());
+                showAlert("Congratulations!", "You won! Your score is " + score);
+            } else if (player.getLife() <= 0) {
+                gameEnded = true;
+                showAlert("Game Over", "You ran out of life. Game Over!");
+            } else if (player.getSteps() >= gameEngine.getTimeLimit()) {
+                gameEnded = true;
+                showAlert("Game Over", "You went above the steps limit! Game Over!");
+            }
         }
+
     }
 
     private void clearPreviousIcons() {
