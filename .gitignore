@@ -43,3 +43,5 @@ gradle-app.setting
 
 # OS specific
 .DS_Store
+
+.idea/
