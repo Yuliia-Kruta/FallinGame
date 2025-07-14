@@ -214,19 +214,36 @@ public class GameEngine {
      * Loads top scores from the file.
      */
     public static void loadTopScores() {
-        topScores.clear(); // Clear before loading to prevent duplicates
-        try (Scanner scanner = new Scanner(new File(TOP_SCORES_FILE))) {
+        topScores.clear(); // Clear before loading
+
+        File file = new File(TOP_SCORES_FILE);
+        if (!file.exists()) {
+            // No file yet; just return
+            return;
+        }
+
+        try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+                String line = scanner.nextLine().trim();
+                if (line.isEmpty()) continue; // Skip empty lines
+
                 String[] parts = line.split(" ");
-                int score = Integer.parseInt(parts[0]);
-                LocalDate date = LocalDate.parse(parts[1]);
-                topScores.add(new Score(score, date));
+                if (parts.length != 2) continue; // Skip invalid lines
+
+                try {
+                    int score = Integer.parseInt(parts[0]);
+                    LocalDate date = LocalDate.parse(parts[1]);
+                    topScores.add(new Score(score, date));
+                } catch (NumberFormatException | java.time.format.DateTimeParseException e) {
+                    // Skip lines with invalid number or date
+                    continue;
+                }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Top scores file not found. Creating a new one.");
+        } catch (IOException e) {
+            System.err.println("Error reading top scores: " + e.getMessage());
         }
     }
+
 
 
 
