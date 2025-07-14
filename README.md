@@ -1,7 +1,7 @@
 <h1 align="center">Fallin Game</h1>
 <img src="./fallin-game.gif" width="60%"/>
 <h2>Project description</h2>
-<b>Fallin Game</b> is a simple JavaFX-based grid game developed as part of a university assignment.  
+<b>Fallin Game</b> is a simple <b>JavaFX-based</b> grid game developed as part of a university assignment.  
 The goal is to move a player character across a maze-like grid to reach the exit, while avoiding traps and mutants, and collecting treasures and medical kits.
 
 <h2>Features</h2>
