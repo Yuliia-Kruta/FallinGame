@@ -12,8 +12,9 @@
     </center>
     <right>
         <VBox prefHeight="512.0" prefWidth="240.0" spacing="15.0" BorderPane.alignment="CENTER">
-            <TextField fx:id="difficultyInput" promptText="Please enter difficulty (0-10)" />
-            <Button onAction="#handleRun" prefHeight="26.0" prefWidth="50.0" text="Run" textAlignment="CENTER" />
+            <Label fx:id="difficultyInputLabel" text="Please enter difficulty of the game (0-10)" wrapText="true" />
+            <TextField fx:id="difficultyInput" promptText="Please enter difficulty" />
+            <Button onAction="#handleRun" prefHeight="26.0" prefWidth="50.0" text="New Game" textAlignment="CENTER" />
             <Label fx:id="stepsLimit" text="Steps left: " wrapText="true" />
             <Label fx:id="stepsCounter" text="Steps counter: " />
             <Label fx:id="life" text="Life: " />

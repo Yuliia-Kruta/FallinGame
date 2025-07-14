@@ -115,7 +115,7 @@ public class Controller {
         String instructions = "Instructions:\n" +
                 "1. Use the arrow buttons to move the player around the map.\n" +
                 "2. Collect treasures and avoid mutants and traps.\n" +
-                "3. Reach the exit gate within the time limit to win the game.";
+                "3. Reach the exit gate within the steps limit to win the game.";
         showAlert("Help", instructions);
     }
 
@@ -167,7 +167,7 @@ public class Controller {
         } else if (player.getLife() <= 0) {
             showAlert("Game Over", "You ran out of life. Game Over!");
         } else if (player.getSteps() >= gameEngine.getTimeLimit()) {
-            showAlert("Game Over", "Time's up! Game Over!");
+            showAlert("Game Over", "You went above the steps limit! Game Over!");
         }
     }
 
